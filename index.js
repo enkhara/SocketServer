@@ -1,4 +1,18 @@
-const io = require('socket.io')(3002, {
+const express = require('express');
+const app = express();
+const path = require('path');
+const server = require('http').createServer(app);
+//const io = require('socket.io')(server);
+const port = process.env.PORT || 3002;
+
+server.listen(port, () => {
+	console.log('Server listening at port %d', port);
+});
+
+// Routing
+app.use(express.static(path.join(__dirname, 'public')));
+
+const io = require('socket.io')(server, {
 	cors: {
 		origin: 'http://localhost:3000',
 	},
