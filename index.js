@@ -2,7 +2,9 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const server = require('http').createServer(app);
-//const io = require('socket.io')(server);
+
+require('dotenv').config();
+
 const port = process.env.PORT || 3002;
 
 server.listen(port, () => {
@@ -14,7 +16,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const io = require('socket.io')(server, {
 	cors: {
-		origin: 'http://localhost:3000',
+		origin: process.env.SOCKET_SERVER_REACT_APP,
 	},
 });
 
@@ -32,24 +34,26 @@ const removeUser = (socketId) => {
 const getUser = (userId) => {
 	return users.find((user) => user.userId === userId);
 };
-
+console.log('user array', users);
 io.on('connection', (socket) => {
 	//when connect
-	console.log('a user connected');
+	console.log('a user connected', users);
 
 	//take userId and socketID from user
 	socket.on('addUser', (userId) => {
 		addUser(userId, socket.id);
 		io.emit('getUsers', users);
+		console.log('linea 46 users', users);
 	});
 
 	//send and get message
 	//socket.on ==> get
 	//io.emit ==> send
 	socket.on('sendMessage', ({ senderId, receiverId, text }) => {
-		console.log(receiverId);
+		console.log('receiverId linea 52', receiverId);
 		const user = getUser(receiverId);
-		console.log(user);
+		console.log('user linea 54', user);
+		console.log('socketId linea 56', user.socketId);
 		io.to(user.socketId).emit('getMessage', {
 			senderId,
 			text,
@@ -58,7 +62,7 @@ io.on('connection', (socket) => {
 
 	//when disconnect
 	socket.on('disconnect', () => {
-		console.log('a user disconnceted');
+		console.log('a user disconnected');
 		removeUser(socket.id);
 		io.emit('getUsers', users);
 	});
