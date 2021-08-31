@@ -14,7 +14,9 @@ app.use(cors(), express.static(path.join(__dirname, 'public')));
 const io = require('socket.io')(server, {
 	cors: {
 		origin: process.env.SOCKET_SERVER_REACT_APP,
-		methods: ['GET', 'POST'],
+		methods: ['GET', 'POST', 'OPTIONS'],
+		allowedHeaders: ['Authorization'],
+		credentials: true,
 	},
 });
 
