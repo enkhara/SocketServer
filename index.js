@@ -9,7 +9,6 @@ require('dotenv').config();
 const port = process.env.PORT || 3002;
 
 // Routing
-app.use(cors(), express.static(path.join(__dirname, 'public')));
 
 const io = require('socket.io')(server, {
 	cors: {
@@ -19,6 +18,7 @@ const io = require('socket.io')(server, {
 		credentials: true,
 	},
 });
+app.use(cors(), express.static(path.join(__dirname, 'public')));
 
 server.listen(port, () => {
 	console.log('Server listening at port %d', port);
