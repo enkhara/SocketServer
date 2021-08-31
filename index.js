@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const path = require('path');
 const server = require('http').createServer(app);
-const cors = require('cors');
+//const cors = require('cors');
 
 require('dotenv').config();
 
@@ -18,7 +18,8 @@ const io = require('socket.io')(server, {
 		credentials: true,
 	},
 });
-app.use(cors(), express.static(path.join(__dirname, 'public')));
+//app.use(cors(), express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 server.listen(port, () => {
 	console.log('Server listening at port %d', port);
