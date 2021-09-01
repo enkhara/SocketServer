@@ -1,12 +1,12 @@
 const express = require('express');
 const path = require('path');
-const cors = require('cors');
+//const cors = require('cors');
 const server = require('http').createServer(app);
 const app = express();
 
 require('dotenv').config();
 
-app.use(cors(), express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const port = process.env.PORT || 3002;
 // Routing
@@ -19,15 +19,15 @@ const io = require('socket.io')(server, {
 		credentials: true,
 	},
 });
-app.use(function (req, res, next) {
-	res.set('Access-Control-Allow-Origin', '*');
-	res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-	res.set(
-		'Access-Control-Allow-Headers',
-		'Origin, X-Requested-With, Content-Type, Accept'
-	);
-	next(createError(404));
-});
+// app.use(function (req, res, next) {
+// 	res.set('Access-Control-Allow-Origin', '*');
+// 	res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+// 	res.set(
+// 		'Access-Control-Allow-Headers',
+// 		'Origin, X-Requested-With, Content-Type, Accept'
+// 	);
+// 	next(createError(404));
+// });
 app.use(express.static(path.join(__dirname, 'public')));
 
 server.listen(port, () => {
