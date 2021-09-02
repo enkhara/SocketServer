@@ -1,37 +1,23 @@
 const express = require('express');
-const path = require('path');
-//const cors = require('cors');
 const app = express();
+const path = require('path');
 const server = require('http').createServer(app);
 
 require('dotenv').config();
 
-app.use(express.static(path.join(__dirname, 'public')));
-
 const port = process.env.PORT || 3002;
+
+server.listen(port, () => {
+	console.log('Server listening at port %d', port);
+});
+
 // Routing
+app.use(express.static(path.join(__dirname, 'public')));
 
 const io = require('socket.io')(server, {
 	cors: {
 		origin: process.env.SOCKET_SERVER_REACT_APP,
-		methods: ['GET', 'POST', 'OPTIONS'],
-		allowedHeaders: ['Authorization'],
-		credentials: true,
 	},
-});
-// app.use(function (req, res, next) {
-// 	res.set('Access-Control-Allow-Origin', '*');
-// 	res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-// 	res.set(
-// 		'Access-Control-Allow-Headers',
-// 		'Origin, X-Requested-With, Content-Type, Accept'
-// 	);
-// 	next(createError(404));
-// });
-app.use(express.static(path.join(__dirname, 'public')));
-
-server.listen(port, () => {
-	console.log('Server listening at port %d', port);
 });
 
 let users = [];
@@ -57,7 +43,7 @@ io.on('connection', (socket) => {
 	socket.on('addUser', (userId) => {
 		addUser(userId, socket.id);
 		io.emit('getUsers', users);
-		console.log('linea 46 users', users);
+		console.log('linea 46 users CONECTEDS', users);
 	});
 
 	//send and get message
@@ -67,11 +53,16 @@ io.on('connection', (socket) => {
 		console.log('receiverId linea 52', receiverId);
 		const user = getUser(receiverId);
 		console.log('user linea 54', user);
-		console.log('socketId linea 56', user.socketId);
-		io.to(user.socketId).emit('getMessage', {
-			senderId,
-			text,
-		});
+		console.log('USER.socketId linea 56', user.socketId);
+		console.log(text);
+		io.to(user.socketId).emit(
+			'getMessage',
+			{
+				senderId,
+				text,
+			},
+			console.log('senderId EMITTTTT', senderId, 'MESSAGE', text)
+		);
 	});
 
 	//when disconnect
@@ -79,5 +70,6 @@ io.on('connection', (socket) => {
 		console.log('a user disconnected');
 		removeUser(socket.id);
 		io.emit('getUsers', users);
+		console.log('users connected before disconexion user', users);
 	});
 });
